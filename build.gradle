@@ -18,4 +18,30 @@ task consolidatedJar(type: Jar) {
     with jar
 }
 
-defaultTasks 'consolidatedJar'
+def concat(File src1, File src2, File dest) {
+    def input1 = src1.newDataInputStream()
+    def input2 = src2.newDataInputStream()
+    def output = dest.newDataOutputStream()
+
+    output << input1
+    output << input2
+
+    input1.close()
+    input2.close()
+    output.close()
+}
+
+task executableJar(dependsOn: 'consolidatedJar') {
+    doLast {
+        def executableFile = new File("build/util")
+
+        concat(new File("src/main/bash/header.sh"),
+               new File("build/libs/util.jar"),
+               executableFile)
+
+        Runtime.getRuntime().exec("chmod +x "
+               + executableFile.getAbsolutePath()).waitFor()
+    }
+}
+
+defaultTasks 'executableJar'
