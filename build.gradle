@@ -1,0 +1,16 @@
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+
+// Create a single Jar with all dependencies.
+task consolidatedJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'Main'
+    }
+    archiveName = "util.jar"
+    with jar
+}
+
+defaultTasks 'consolidatedJar'
