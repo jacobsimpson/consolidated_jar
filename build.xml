@@ -1,0 +1,27 @@
+<project name="ConsolidatedJar" default="dist" basedir=".">
+    <description>Consolidated Jar</description>
+
+    <property name="src" location="src/main/java"/>
+    <property name="build" location="build"/>
+    <property name="classes" location="${build}/classes"/>
+    <property name="dist" location="${build}/libs"/>
+
+    <target name="compile">
+        <mkdir dir="${classes}"/>
+        <javac includeantruntime="false" srcdir="${src}" destdir="${classes}"/>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist}"/>
+
+        <jar jarfile="${dist}/util.jar" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}"/>
+    </target>
+</project>
