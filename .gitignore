@@ -1,0 +1,12 @@
+*.iml
+.*.sw?
+.sw?
+/.gradle/
+/.idea/
+/build/
+/dist/
+/gradle/
+/gradlew
+/gradlew.bat
+/project/
+/target/
