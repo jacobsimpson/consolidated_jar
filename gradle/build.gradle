@@ -1,0 +1,47 @@
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+
+dependencies {
+    implementation 'commons-cli:commons-cli:1.3.1'
+}
+
+// Create a single Jar with all dependencies.
+task consolidatedJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'Main'
+    }
+    archiveFileName = "app.jar"
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+def concat(File src1, File src2, File dest) {
+    def input1 = src1.newDataInputStream()
+    def input2 = src2.newDataInputStream()
+    def output = dest.newDataOutputStream()
+
+    output << input1
+    output << input2
+
+    input1.close()
+    input2.close()
+    output.close()
+}
+
+task distExec(dependsOn: 'consolidatedJar') {
+    doLast {
+        def executableFile = new File("build/app")
+
+        concat(new File("src/main/bash/header.sh"),
+               new File("build/libs/app.jar"),
+               executableFile)
+
+        Runtime.getRuntime().exec("chmod +x "
+               + executableFile.getAbsolutePath()).waitFor()
+    }
+}
+
+defaultTasks 'distExec'
