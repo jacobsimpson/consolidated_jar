@@ -1,0 +1,47 @@
+<project name="ConsolidatedJar" default="dist" basedir=".">
+    <description>Consolidated Jar</description>
+
+    <property name="src" location="src/main/java"/>
+    <property name="build" location="build"/>
+    <property name="classes" location="${build}/classes"/>
+    <property name="dist" location="${build}/libs"/>
+
+    <target name="compile">
+        <mkdir dir="${classes}"/>
+        <javac includeantruntime="false"
+               classpath="lib/commons-cli-1.3.1.jar"
+               srcdir="${src}"
+               destdir="${classes}"/>
+    </target>
+
+    <target name="dist" depends="compile">
+        <mkdir dir="${dist}"/>
+
+        <jar jarfile="${dist}/util.jar" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="Main"/>
+            </manifest>
+            <!--
+                 Unzip the commons-cli jar, take all the .class files and put
+                 them in the jar that is being constructed.
+            -->
+            <zipfileset src="lib/commons-cli-1.3.1.jar" includes="**/*.class"/>
+        </jar>
+
+        <!--
+             Munge together the script file that will tell Unix style OSs how
+             to execute the file with the consolidated jar that contains all
+             Java code and libraries that comprise the actual program.
+        -->
+        <concat destfile="${build}/util" binary="yes">
+            <filelist dir="src/main/bash" files="header.sh"/>
+            <filelist dir="${dist}" files="util.jar"/>
+        </concat>
+        <chmod file="${build}/util" perm="ugo+x"/>
+
+    </target>
+
+    <target name="clean">
+        <delete dir="${build}"/>
+    </target>
+</project>
