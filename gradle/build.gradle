@@ -33,7 +33,7 @@ def concat(File src1, File src2, File dest) {
 
 task distExec(dependsOn: 'consolidatedJar') {
     doLast {
-        def executableFile = new File("build/app")
+        def executableFile = new File("$projectDir/build/app")
 
         concat(new File("src/main/bash/header.sh"),
                new File("build/libs/app.jar"),

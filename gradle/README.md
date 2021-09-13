@@ -18,6 +18,5 @@ portion of the file.
 
 ```bash
 gradle
-chmod a+x build/util
-build/util
+build/app
 ```
